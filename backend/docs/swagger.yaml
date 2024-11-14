@@ -1,0 +1,46 @@
+definitions:
+  service.PostURLParams:
+    properties:
+      long_url:
+        type: string
+    type: object
+  service.PostURLResponse:
+    properties:
+      short_url:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /compressor:
+    post:
+      description: Responds with the shortened URL in JSON
+      parameters:
+      - description: Long URL JSON
+        in: body
+        name: long_url_json
+        required: true
+        schema:
+          $ref: '#/definitions/service.PostURLParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/service.PostURLResponse'
+      summary: Shortens given URL
+  /compressor/{short_url}:
+    get:
+      description: Responds with nothing, redirects to long URL
+      parameters:
+      - description: short URL
+        in: path
+        name: short_url
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Found
+      summary: Redirects short URL
+swagger: "2.0"

@@ -1,0 +1,74 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/compressor": {
+            "post": {
+                "description": "Responds with the shortened URL in JSON",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Shortens given URL",
+                "parameters": [
+                    {
+                        "description": "Long URL JSON",
+                        "name": "long_url_json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/service.PostURLParams"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/service.PostURLResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/compressor/{short_url}": {
+            "get": {
+                "description": "Responds with nothing, redirects to long URL",
+                "summary": "Redirects short URL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "short URL",
+                        "name": "short_url",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "service.PostURLParams": {
+            "type": "object",
+            "properties": {
+                "long_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.PostURLResponse": {
+            "type": "object",
+            "properties": {
+                "short_url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

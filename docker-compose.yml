@@ -1,0 +1,56 @@
+version: "3.8"
+services:
+  url-compressor:
+    container_name: url-compressor
+    build: ./
+    environment:
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+
+      CLICKHOUSE_USER: "keeley"
+      CLICKHOUSE_PASSWORD: "electronics"
+      CLICKHOUSE_DB: "url_compressor"
+      CLICKHOUSE_HOST: "clickhouse"
+      CLICKHOUSE_PORT: "9000"
+    ports:
+      - "1228:1228"
+    expose:
+      - "1228:1228"
+    networks:
+      - compressor-net
+    depends_on:
+      - clickhouse
+      - redis
+    links:
+      - clickhouse
+      - redis
+    restart: on-failure
+
+  redis:
+    container_name: "redis"
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - compressor-net
+
+  clickhouse:
+    container_name: "clickhouse"
+    image: clickhouse/clickhouse-server:latest
+    environment:
+      CLICKHOUSE_USER: "keeley"
+      CLICKHOUSE_PASSWORD: "electronics"
+      CLICKHOUSE_DB: "url_compressor"
+      CLICKHOUSE_HOST: "clickhouse"
+      CLICKHOUSE_PORT: "19000"
+    ports:
+      - "18123:8123"
+      - "19000:9000"
+    networks:
+      - compressor-net
+    volumes:
+      - "./backend/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql"
+
+networks:
+  compressor-net:
+    driver: bridge
